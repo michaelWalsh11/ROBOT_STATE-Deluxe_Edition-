@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 //@Disabled
 public class Tuning extends OpMode {
 
-    Init robot   = new Init();
+    Init robot = new Init();
 
     public double OUT_ARM_SPEED = 0.0;
     public double IN_ARM_SPEED = 0.0;// sets rate to move servo
@@ -20,6 +20,8 @@ public class Tuning extends OpMode {
     public double rotatePos3;
     public double rotatePos4;
     public double rotatePos5;
+    public double rotatePos6;
+    public double rotatePos7;
 
 
     public double inPos1;
@@ -88,6 +90,9 @@ public class Tuning extends OpMode {
         rotatePos4 = robot.intakeRotator.getPosition();
         rotatePos5 = robot.intakeSwivel.getPosition();
 
+        rotatePos6 = robot.intake1.getPosition();
+        rotatePos7 = robot.intake2.getPosition();
+
         inPos1 = robot.intake1.getPosition();
         outPos1 = robot.outtake1.getCurrentPosition();
 
@@ -103,7 +108,7 @@ public class Tuning extends OpMode {
 
         if (gamepad2.left_bumper)
         {
-            rotatePos = Math.min(rotatePos + 0.01, 1.0);;
+            rotatePos = Math.min(rotatePos + 0.01, 1.0);
         }
         if (gamepad2.right_bumper)
         {
@@ -115,7 +120,7 @@ public class Tuning extends OpMode {
 
         if (gamepad2.y)
         {
-            rotatePos1 = Math.min(rotatePos1 + 0.01, 1.0);;
+            rotatePos1 = Math.min(rotatePos1 + 0.01, 1.0);
         }
         if (gamepad2.a)
         {
@@ -126,7 +131,7 @@ public class Tuning extends OpMode {
 
         if (gamepad2.b)
         {
-            rotatePos2 = Math.min(rotatePos2 + 0.01, 1.0);;
+            rotatePos2 = Math.min(rotatePos2 + 0.01, 1.0);
         }
         if (gamepad2.x)
         {
@@ -137,7 +142,7 @@ public class Tuning extends OpMode {
 
         if (gamepad1.dpad_up)
         {
-            rotatePos3 = Math.min(rotatePos3 + 0.01, 1.0);;
+            rotatePos3 = Math.min(rotatePos3 + 0.01, 1.0);
         }
         if (gamepad1.dpad_down)
         {
@@ -148,7 +153,7 @@ public class Tuning extends OpMode {
 
         if (gamepad1.a)
         {
-            rotatePos4 = Math.min(rotatePos4 + 0.01, 1.0);;
+            rotatePos4 = Math.min(rotatePos4 + 0.01, 1.0);
         }
         if (gamepad1.y)
         {
@@ -168,18 +173,40 @@ public class Tuning extends OpMode {
 
         robot.intakeSwivel.setPosition(rotatePos5);
 
-
-        if (gamepad2.left_stick_y > 0.4)
+        if (gamepad1.right_trigger > 0.4)
         {
-            inPos1 += Math.min(inPos1 + 0.01, 1.0);
-            inTake(inPos1);
+            rotatePos6 = Math.min(rotatePos6 + 0.01, 1.0);
+        }
+        if (gamepad1.left_trigger > 0.4)
+        {
+            rotatePos6 = Math.max(rotatePos6 - 0.01, 0.0);
         }
 
-        if (gamepad2.left_stick_y < -0.4)
+        robot.intake1.setPosition(rotatePos6);
+
+        if (gamepad2.right_trigger > 0.4)
         {
-            inPos1 -= Math.max(inPos1 - 0.01, 0.0);
-            inTake(inPos1);
+            rotatePos7 = Math.min(rotatePos7 + 0.01, 1.0);
         }
+        if (gamepad2.left_trigger > 0.4)
+        {
+            rotatePos7 = Math.max(rotatePos7 - 0.01, 0.0);
+        }
+
+        robot.intake2.setPosition(rotatePos5);
+
+
+//        if (gamepad2.left_stick_y > 0.4)
+//        {
+//            inPos1 += Math.min(inPos1 + 0.01, 1.0);
+//            inTake(inPos1);
+//        }
+//
+//        if (gamepad2.left_stick_y < -0.4)
+//        {
+//            inPos1 -= Math.max(inPos1 + 0.01, 0.0);
+//            inTake(inPos1);
+//        }
 
         //auto intake
         if (gamepad2.right_stick_y > 0.4)
@@ -202,16 +229,18 @@ public class Tuning extends OpMode {
         telemetry.addLine("outtakeSwivel (left and right bumper) " + rotatePos + "  " + robot.outtakeSwivel.getPosition());
         telemetry.addLine("outtakeSwivelLower (y and a) " + rotatePos1 + "  " + robot.outtakeSwivelLower.getPosition());
         telemetry.addLine("outtakeGrasper (b and x) " + rotatePos2 + "  " + robot.outtakeGrasper.getPosition());
+        telemetry.addLine("intake2 (left and right triggers) " + rotatePos7 + "  " + robot.intake2.getPosition());
         telemetry.addLine("");
         telemetry.addLine("");
         telemetry.addLine("Arm Tuning (controller 2");
         telemetry.addLine("");
         telemetry.addLine("outtake (dpad_up and dpad_down) " + outPos1);
-        telemetry.addLine("intake (LeftStickY) " + inPos1);
+        //telemetry.addLine("intake (LeftStickY) " + inPos1);
         telemetry.addLine("");
         telemetry.addLine("");
         telemetry.addLine("Servo Tuning (controller 1");
         telemetry.addLine("");
+        telemetry.addLine("intake1 (left and right triggers) " + rotatePos6 + "  " + robot.intake1.getPosition());
         telemetry.addLine("intakeGrasper (dpad_up and dpad_down) " + rotatePos3 + "  " + robot.intakeGrasper.getPosition());
         telemetry.addLine("intakeRotator (a and y) " + rotatePos4 + "  " + robot.intakeRotator.getPosition());
         telemetry.addLine("intakeSwivel (lb and rb) " + rotatePos5 + "  " + robot.intakeSwivel.getPosition());
