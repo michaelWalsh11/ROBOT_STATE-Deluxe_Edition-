@@ -25,6 +25,9 @@ public class Drive extends OpMode {
     private double outtakeWrist;
     private double outtakeSwivel;
 
+    private double unSheath;
+    private boolean turnedOff;
+
     private double DRIVE_SPEED = 1.0;
 
     @Override /* * */
@@ -53,6 +56,8 @@ public class Drive extends OpMode {
         outtakeGrasper = robot.outtakeGrasper.getPosition();
         outtakeWrist = robot.outtakeSwivelLower.getPosition();
         outtakeSwivel = robot.outtakeSwivel.getPosition();
+
+        unSheath = robot.unSheath.getPosition();
     }
 
     @Override
@@ -60,6 +65,8 @@ public class Drive extends OpMode {
         driveWToggle();
         intakeSystem();
         outtakeSystem();
+
+        sheathManagment();
 
         controller1Telemetry();
         controller2Telemetry();
@@ -74,7 +81,7 @@ public class Drive extends OpMode {
             }
         }).start();
 
-        //THREAD II ELECTRIC BOOGALOO (EMPTY)
+        //THREAD II, ELECTRIC BOOGALOO (EMPTY)
         new Thread(() -> {
             try {
                 autoPickUp();
@@ -134,6 +141,21 @@ public class Drive extends OpMode {
 
     }
 
+    public void sheathManagment()
+    {
+        if (!gamepad1.y && !turnedOff)
+        {
+            robot.unSheath.setPosition(UNSHEATH_SHEATH);
+        }
+
+        if (gamepad1.y || turnedOff)
+        {
+            robot.unSheath.setPosition(UNSHEATH_UNSHEATH);
+            turnedOff = true;
+        }
+    }
+
+
     public void autoHang() throws InterruptedException {
         Thread.sleep(10);
     }
@@ -146,6 +168,7 @@ public class Drive extends OpMode {
 
         if (gamepad2.a)
         {
+            outPos = OUTTAKE_ARM_BOTTOM;
             intakeGrasper = INTAKE_GRASPER_CLOSE;
             outtakeGrasper = OUTTAKE_GRASPER_OPEN;
             outtakeWrist = OUTTAKE_LOWER_SWIVEL_TRANSFER;
@@ -177,14 +200,14 @@ public class Drive extends OpMode {
     {
 
         //intake slides
-        if (gamepad2.right_stick_y > 0.4)
-        {
-            intakePos = Math.min(intakePos + 0.008, INTAKE_OUT);
-        }
-
         if (gamepad2.right_stick_y < -0.4)
         {
-            intakePos = Math.max(intakePos - 0.008, INTAKE_IN);
+            intakePos = Math.min(intakePos + 0.008, INTAKE_IN);
+        }
+
+        if (gamepad2.right_stick_y > 0.4)
+        {
+            intakePos = Math.max(intakePos - 0.008, INTAKE_OUT);
         }
 
         robot.intake1.setPosition(intakePos);
