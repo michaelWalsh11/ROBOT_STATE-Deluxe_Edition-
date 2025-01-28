@@ -22,6 +22,7 @@ public class Tuning extends OpMode {
     public double rotatePos5;
     public double rotatePos6;
     public double rotatePos7;
+    public double rotatePos8;
 
 
     public double inPos1;
@@ -193,7 +194,18 @@ public class Tuning extends OpMode {
             rotatePos7 = Math.max(rotatePos7 - 0.01, 0.0);
         }
 
-        robot.intake2.setPosition(rotatePos5);
+        if (gamepad1.dpad_left)
+        {
+            rotatePos8 = Math.min(rotatePos8 + 0.01, 1.0);
+        }
+        if (gamepad1.dpad_right)
+        {
+            rotatePos8 = Math.max(rotatePos8 - 0.01, 0.0);
+        }
+
+        robot.unSheath.setPosition(rotatePos8);
+
+        //robot.intake2.setPosition(rotatePos7);
 
 
 //        if (gamepad2.left_stick_y > 0.4)
@@ -209,19 +221,19 @@ public class Tuning extends OpMode {
 //        }
 
         //auto intake
-        if (gamepad2.right_stick_y > 0.4)
-        {
-            OUT_ARM_SPEED = 1.0;
-            outPos1 += (int) (gamepad2.right_stick_y * 15.0);
-        }
-
-        if (gamepad2.right_stick_y < -0.4)
-        {
-            OUT_ARM_SPEED = 1.0;
-            outPos1 -= (int) (Math.abs(gamepad2.right_stick_y) * 15.0);
-        }
-
-        outTake(outPos1);
+//        if (gamepad2.right_stick_y > 0.4)
+//        {
+//            OUT_ARM_SPEED = 1.0;
+//            outPos1 += (int) (gamepad2.right_stick_y * 15.0);
+//        }
+//
+//        if (gamepad2.right_stick_y < -0.4)
+//        {
+//            OUT_ARM_SPEED = 1.0;
+//            outPos1 -= (int) (Math.abs(gamepad2.right_stick_y) * 15.0);
+//        }
+//
+//        outTake(outPos1);
 
 
         telemetry.addLine("Servo Tuning (controller 2");
@@ -244,6 +256,7 @@ public class Tuning extends OpMode {
         telemetry.addLine("intakeGrasper (dpad_up and dpad_down) " + rotatePos3 + "  " + robot.intakeGrasper.getPosition());
         telemetry.addLine("intakeRotator (a and y) " + rotatePos4 + "  " + robot.intakeRotator.getPosition());
         telemetry.addLine("intakeSwivel (lb and rb) " + rotatePos5 + "  " + robot.intakeSwivel.getPosition());
+        telemetry.addLine("unSheath (dpad_left and dpad_right) " + rotatePos8 + "  " + robot.unSheath.getPosition());
 
 
     }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -29,6 +30,8 @@ public class Init {
 
     public Servo intake1 = null;
     public Servo intake2 = null;
+
+    public Servo unSheath = null;
 
     public IMU imu;
     public double offset = 0;//in degrees
@@ -59,7 +62,7 @@ public class Init {
         leftRear.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.REVERSE);
         outtake1.setDirection(DcMotor.Direction.FORWARD);
-        outtake2.setDirection(DcMotor.Direction.FORWARD);
+        outtake2.setDirection(DcMotor.Direction.REVERSE);
         outtakeRotator.setDirection(DcMotor.Direction.FORWARD);
 
         //DRIVE MOTOR POWER
@@ -85,6 +88,8 @@ public class Init {
 
         intake1 = hwMap.servo.get("intake1");
         intake2 = hwMap.servo.get("intake2");
+
+        unSheath = hwMap.servo.get("unSheath");
 
         //IMU
         imu = hwMap.get(IMU.class, "imu");
