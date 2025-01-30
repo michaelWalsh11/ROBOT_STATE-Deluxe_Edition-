@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tuning;
 
 import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.Init;
 
 
 @TeleOp(name="Tune her, Hunter", group="Training")
