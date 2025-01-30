@@ -15,6 +15,7 @@ public class Drive extends OpMode {
     Init robot = new Init();
 
     private int outPos;
+    private int armRotatorPos;
     private boolean toggle;
     private double intakePos;
     private double intakeGrasper;
@@ -170,25 +171,28 @@ public class Drive extends OpMode {
         {
             outPos = OUTTAKE_ARM_BOTTOM;
             intakeGrasper = INTAKE_GRASPER_CLOSE;
-            outtakeGrasper = OUTTAKE_GRASPER_OPEN;
-            outtakeWrist = OUTTAKE_LOWER_SWIVEL_TRANSFER;
-            outtakeSwivel = OUTTAKE_SWIVEL_TRANSFER;
             intakeRotate = INTAKE_ROTATOR_STRAIGHT;
             intakeSwivel = INTAKE_SWIVEL_TRANSFER;
+            outtakeGrasper = OUTTAKE_GRASPER_OPEN;
+            outtakeWrist = OUTTAKE_LOWER_SWIVEL_TRANSFER;
 
-            Thread.sleep(500);
+            Thread.sleep(100);
 
             intakePos = INTAKE_IN;
 
-            Thread.sleep(500);
+            Thread.sleep(800);
+
+            outtakeSwivel = OUTTAKE_SWIVEL_TRANSFER;
+
+            Thread.sleep(200);
 
             outtakeGrasper = OUTTAKE_GRASPER_CLOSE;
 
-            Thread.sleep(500);
+            Thread.sleep(400);
 
             intakeGrasper = INTAKE_GRASPER_OPEN;
 
-            Thread.sleep(500);
+            Thread.sleep(100);
 
             outtakeWrist = OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET;
             outtakeSwivel = OUTTAKE_SWIVEL_OUTTAKE_BUCKET;
@@ -200,12 +204,12 @@ public class Drive extends OpMode {
     {
 
         //intake slides
-        if (gamepad2.right_stick_y < -0.4)
+        if (gamepad2.right_stick_y > 0.4)
         {
             intakePos = Math.min(intakePos + 0.008, INTAKE_IN);
         }
 
-        if (gamepad2.right_stick_y > 0.4)
+        if (gamepad2.right_stick_y < -0.4)
         {
             intakePos = Math.max(intakePos - 0.008, INTAKE_OUT);
         }
@@ -228,12 +232,12 @@ public class Drive extends OpMode {
 
 
         //swivel control
-        if (gamepad2.left_stick_y > 0.4)
+        if (gamepad2.left_stick_y < -0.4)
         {
             intakeSwivel = Math.min(intakeSwivel + 0.008, INTAKE_SWIVEL_TRANSFER);
         }
 
-        if (gamepad2.left_stick_y < -0.4)
+        if (gamepad2.left_stick_y > 0.4)
         {
             intakeSwivel = Math.max(intakeSwivel - 0.008, INTAKE_SWIVEL_DOWN);
         }
@@ -279,28 +283,56 @@ public class Drive extends OpMode {
             outPos = Math.max(outPos - OUTTAKE_ARM_SPEED, OUTTAKE_ARM_BOTTOM);
         }
 
+        //ARM ROTATOR
+        if (gamepad1.x)
+        {
+            armRotatorPos = Math.min(armRotatorPos * OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_BACK);
+        }
+        if (gamepad1.b)
+        {
+            armRotatorPos = Math.max(armRotatorPos - OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_FORWARD);
+        }
+
+
         //grasper control
         if (gamepad1.right_trigger > 0.4)
         {
-            intakeGrasper = INTAKE_GRASPER_CLOSE;
+            outtakeGrasper = INTAKE_GRASPER_CLOSE;
         }
 
-        if (gamepad2.left_trigger > 0.4)
+        if (gamepad1.left_trigger > 0.4)
         {
-            intakeGrasper = INTAKE_GRASPER_OPEN;
+            outtakeGrasper = INTAKE_GRASPER_OPEN;
         }
 
         robot.outtakeGrasper.setPosition(outtakeGrasper);
 
 
         //SET STUFF I SUPPOSE
-        robot.outtake1.setTargetPosition(outPos);
-        robot.outtake1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.outtake1.setPower(OUTTAKE_ARM_POWER);
+        if (outPos > 0)
+        {
+            robot.outtake1.setTargetPosition(outPos);
+            robot.outtake1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.outtake1.setPower(OUTTAKE_ARM_POWER);
 
-        robot.outtake2.setTargetPosition(outPos);
-        robot.outtake2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.outtake2.setPower(OUTTAKE_ARM_POWER);
+            robot.outtake2.setTargetPosition(outPos);
+            robot.outtake2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.outtake2.setPower(OUTTAKE_ARM_POWER);
+        }
+        else {
+            robot.outtake1.setPower(0.0);
+            robot.outtake2.setPower(0.0);
+        }
+
+        if (turnedOff)
+        {
+            robot.outtakeRotator.setTargetPosition(armRotatorPos);
+            robot.outtakeRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.outtakeRotator.setPower(OUTTAKE_ROTATOR_POWER);
+        }
+        else {
+            robot.outtakeRotator.setPower(0.0);
+        }
 
         robot.outtakeSwivel.setPosition(outtakeSwivel);
         robot.outtakeSwivelLower.setPosition(outtakeWrist);

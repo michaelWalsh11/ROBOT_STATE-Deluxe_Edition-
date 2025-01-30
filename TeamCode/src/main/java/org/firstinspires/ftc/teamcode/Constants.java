@@ -19,6 +19,11 @@ public class Constants
     public static double INTAKE_OUT = 0.08;
     public static double INTAKE_IN = 0.62;
 
+    public static int OUTTAKE_ROTATOR_FORWARD = 0;
+    public static int OUTTAKE_ROTATOR_BACK = 0;
+    public static int OUTTAKE_ROTATOR_SPEED = 5;
+    public static double OUTTAKE_ROTATOR_POWER = 0.6;
+
 
     public static double OUTTAKE_GRASPER_OPEN = 0.0;
     public static double OUTTAKE_GRASPER_CLOSE = 0.70;
