@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -450,9 +451,27 @@ public class BucketAuto extends LinearOpMode {
 
         waitForStart();
 
+        SequentialAction transfer = new SequentialAction(
+                inGrasper.close(),
+                new ParallelAction(
+                        inRotator.straight(),
+                        inSwivel.transfer(),
+                        inSlider.in(),
+                        outGrasper.open(),
+                        outLowerSwivel.transfer()
+                ),
+                outSwivel.transfer(),
+                outGrasper.close(),
+                inGrasper.open(),
+                new ParallelAction(
+                        outSwivel.bucket(),
+                        outLowerSwivel.bucket()
+                )
+        );
 
         Actions.runBlocking(
                 new SequentialAction(
+                        transfer,
                         action.build()
                 )
         );

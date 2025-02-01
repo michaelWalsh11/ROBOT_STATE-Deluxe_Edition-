@@ -28,18 +28,19 @@ public class Constants
     public static double OUTTAKE_GRASPER_OPEN = 0.0;
     public static double OUTTAKE_GRASPER_CLOSE = 0.70;
 
-    public static double OUTTAKE_LOWER_SWIVEL_TRANSFER = 1.0;
-    public static double OUTTAKE_LOWER_SWIVEL_INTAKE = 0.66;
-    public static double OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN = 0.50;
-    public static double OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET = 0.13;
+    public static double OUTTAKE_LOWER_SWIVEL_TRANSFER = 0.94;
+    public static double OUTTAKE_LOWER_SWIVEL_INTAKE = 0.62;
+    public static double OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN = 0.2;
+    public static double OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN_END = 0;
+    public static double OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET = 0.09;
 
     public static double OUTTAKE_SWIVEL_TRANSFER = 0.052;
     public static double OUTTAKE_SWIVEL_INTAKE = 0.66;
-    public static double OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START = 0.16;
-    public static double OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END = 0.26;
+    public static double OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START = 0.25;
+    public static double OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END = 0.50;
     public static double OUTTAKE_SWIVEL_OUTTAKE_BUCKET = 0.33;
 
-    public static double UNSHEATH_SHEATH = 0.27;
+    public static double UNSHEATH_SHEATH = 0.24;
     public static double UNSHEATH_UNSHEATH = 0.51;
 
     public static int OUTTAKE_ARM_SPEED = 15;

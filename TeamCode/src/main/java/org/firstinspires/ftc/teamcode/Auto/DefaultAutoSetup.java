@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -23,8 +22,8 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name="Pay Up Russel", group="Autonomous")
-public class RusselGimmeTenDollars extends LinearOpMode {
+@Autonomous(name="Test Default", group="Autonomous")
+public class DefaultAutoSetup extends LinearOpMode {
 
     public class Outtake {
 
@@ -334,15 +333,6 @@ public class RusselGimmeTenDollars extends LinearOpMode {
             }
         }
 
-        public class OuttakeLowerSwivelSpecimenEnd implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivelLower.setPosition(OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN_END);
-                return false;
-            }
-        }
-
 
         public Action intake() { return new OuttakeLowerSwivelIntake(); }
 
@@ -358,10 +348,6 @@ public class RusselGimmeTenDollars extends LinearOpMode {
             return new OuttakeLowerSwivelTransfer();
         }
 
-        public Action specimenEnd()
-        {
-            return new OuttakeLowerSwivelSpecimenEnd();
-        }
     }
 
 
@@ -437,56 +423,11 @@ public class RusselGimmeTenDollars extends LinearOpMode {
 
     }
 
-    public class Sleep
-    {
-        public Sleep()
-        {
-
-        }
-        public class oneSecond implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                try {
-                    Thread.sleep(800);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                return false;
-            }
-
-        }
-
-        public class half implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                return false;
-            }
-
-        }
-
-        public Action oneSec()
-        {
-            return new oneSecond();
-        }
-
-        public Action half()
-        {
-            return new half();
-        }
-    }
-
 
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         Pose2d pose = new Pose2d(0, 0, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, pose);
@@ -502,46 +443,10 @@ public class RusselGimmeTenDollars extends LinearOpMode {
         IntakeSwivel inSwivel = new IntakeSwivel(hardwareMap);
         IntakeGrasper inGrasper = new IntakeGrasper(hardwareMap);
 
-        Sleep sleep = new Sleep();
 
+        TrajectoryActionBuilder action = drive.actionBuilder(pose)
+                .strafeToLinearHeading(new Vector2d(-15, 8), Math.toRadians(45));
 
-        TrajectoryActionBuilder goToWallFirst = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(0, 31), Math.toRadians(90));
-
-        TrajectoryActionBuilder backupALittle = drive.actionBuilder(new Pose2d(0, 31, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(0, 27), Math.toRadians(90));
-
-        TrajectoryActionBuilder GO = drive.actionBuilder(new Pose2d(0, 27, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(37.5, 18.3), Math.toRadians(45));
-
-
-
-        SequentialAction transfer = new SequentialAction(
-                inGrasper.close(),
-                new ParallelAction(
-                        inRotator.straight(),
-                        inSwivel.transfer(),
-                        inSlider.in(),
-                        outGrasper.open(),
-                        outLowerSwivel.transfer()
-                ),
-                outSwivel.transfer(),
-                outGrasper.close(),
-                inGrasper.open(),
-                new ParallelAction(
-                        outSwivel.bucket(),
-                        outLowerSwivel.bucket()
-                )
-        );
-
-        SequentialAction grabOffWallAndPrep = new SequentialAction(
-                outGrasper.open(),
-                outSwivel.transfer(),
-                outLowerSwivel.intake(),
-                outGrasper.close(),
-                outSwivel.specimenStart(),
-                outLowerSwivel.specimen()
-        );
 
 
         waitForStart();
@@ -549,29 +454,7 @@ public class RusselGimmeTenDollars extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        new ParallelAction(
-                                goToWallFirst.build(),
-                                outGrasper.close(),
-                                outLowerSwivel.specimen(),
-                                outSwivel.specimenStart()
-                        ),
-                        sleep.half(),
-                        outSwivel.specimenEnd(),
-                        outLowerSwivel.specimenEnd(),
-                        sleep.half(),
-                        backupALittle.build(),
-                        sleep.half(),
-                        outGrasper.open(),
-                        GO.build(),
-                        new ParallelAction(
-                                inSlider.out(),
-                                inGrasper.open(),
-                                inSwivel.down(),
-                                inRotator.straight()
-                        ),
-                        sleep.half(),
-                        inGrasper.close()
-
+                        action.build()
                 )
         );
 
@@ -585,4 +468,5 @@ public class RusselGimmeTenDollars extends LinearOpMode {
 
     }
 }
+
 
