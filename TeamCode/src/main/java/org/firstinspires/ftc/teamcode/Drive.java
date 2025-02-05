@@ -28,6 +28,7 @@ public class Drive extends OpMode {
 
     private double unSheath;
     private boolean turnedOff;
+    private boolean toggle2 = true;
 
     private double DRIVE_SPEED = 1.0;
 
@@ -48,6 +49,11 @@ public class Drive extends OpMode {
         robot.outtake2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.outtake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outPos = robot.outtake1.getCurrentPosition();
+
+
+        robot.outtakeRotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.outtakeRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armRotatorPos = robot.outtakeRotator.getCurrentPosition();
 
         intakePos = robot.intake1.getPosition();
         intakeGrasper = robot.intakeGrasper.getPosition();
@@ -121,6 +127,9 @@ public class Drive extends OpMode {
         telemetry.addLine("Outtake Grasper position: " + outtakeGrasper);
         telemetry.addLine("Outtake Wrist position: " + outtakeWrist);
         telemetry.addLine("Outtake Swivel position: " + outtakeSwivel);
+        telemetry.addLine("");
+        telemetry.addLine("OuttakeRotator Power: " + robot.outtakeRotator.getPower());
+        telemetry.addLine("OuttakeRotator position: " + robot.outtakeRotator.getCurrentPosition());
         telemetry.addLine("");
     }
 
@@ -276,21 +285,28 @@ public class Drive extends OpMode {
         //ARMS
         if (gamepad1.dpad_up)
         {
-            outPos = Math.min(outPos + OUTTAKE_ARM_SPEED, OUTTAKE_ARM_BUCKET);
+            outPos += OUTTAKE_ARM_SPEED;
         }
         if (gamepad1.dpad_down)
         {
-            outPos = Math.max(outPos - OUTTAKE_ARM_SPEED, OUTTAKE_ARM_BOTTOM);
+            outPos -= OUTTAKE_ARM_SPEED;
+        }
+
+        if (outPos > OUTTAKE_ARM_BUCKET)
+        {
+            outPos = OUTTAKE_ARM_BUCKET;
         }
 
         //ARM ROTATOR
         if (gamepad1.x)
         {
-            armRotatorPos = Math.min(armRotatorPos * OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_BACK);
+            //armRotatorPos = Math.min(armRotatorPos * OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_BACK);
+            armRotatorPos += OUTTAKE_ROTATOR_SPEED;
         }
         if (gamepad1.b)
         {
-            armRotatorPos = Math.max(armRotatorPos - OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_FORWARD);
+            //armRotatorPos = Math.max(armRotatorPos - OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_FORWARD);
+            armRotatorPos -= OUTTAKE_ROTATOR_SPEED;
         }
 
 
@@ -307,9 +323,16 @@ public class Drive extends OpMode {
 
         robot.outtakeGrasper.setPosition(outtakeGrasper);
 
+        if (robot.vertArms.isPressed() && toggle2) {
+            robot.outtake1.setPower(0);
+            robot.outtake2.setPower(0);
+            robot.outtake1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.outtake2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            outPos = 0;
+            toggle2 = false;
+        }
 
-        //SET STUFF I SUPPOSE
-        if (outPos > 0)
+        if(!robot.vertArms.isPressed() || gamepad1.dpad_up)
         {
             robot.outtake1.setTargetPosition(outPos);
             robot.outtake1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -319,9 +342,15 @@ public class Drive extends OpMode {
             robot.outtake2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.outtake2.setPower(OUTTAKE_ARM_POWER);
         }
-        else {
-            robot.outtake1.setPower(0.0);
-            robot.outtake2.setPower(0.0);
+
+        if (outPos > 50)
+        {
+            toggle2 = true;
+        }
+
+        if (outPos < -10)
+        {
+            outPos = -10;
         }
 
         if (turnedOff)

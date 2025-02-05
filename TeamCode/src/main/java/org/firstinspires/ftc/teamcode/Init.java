@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Init {
 
@@ -33,6 +34,7 @@ public class Init {
 
     public Servo unSheath = null;
 
+    public TouchSensor vertArms = null;
     public IMU imu;
     public double offset = 0;//in degrees
 
@@ -82,6 +84,7 @@ public class Init {
         outtakeSwivel = hwMap.servo.get("outSwivel");
         outtakeSwivelLower = hwMap.servo.get("outSwivelLow");
 
+
         intakeGrasper = hwMap.servo.get("inGrasper");
         intakeRotator = hwMap.servo.get("inRotator");
         intakeSwivel = hwMap.servo.get("inSwivel");
@@ -93,6 +96,7 @@ public class Init {
 
         //IMU
         imu = hwMap.get(IMU.class, "imu");
+        vertArms = hwMap.touchSensor.get("touchSensor");
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;

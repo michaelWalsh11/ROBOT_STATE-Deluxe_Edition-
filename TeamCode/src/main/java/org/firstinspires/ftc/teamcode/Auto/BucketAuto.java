@@ -471,8 +471,11 @@ public class BucketAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
+                        outGrasper.open(),
                         transfer,
-                        action.build()
+                        action.build(),
+                        outGrasper.close()
+
                 )
         );
 

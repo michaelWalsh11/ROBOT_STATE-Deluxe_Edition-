@@ -423,6 +423,51 @@ public class DefaultAutoSetup extends LinearOpMode {
 
     }
 
+    public class Sleep
+    {
+        public Sleep()
+        {
+
+        }
+        public class oneSecond implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class half implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public Action oneSec()
+        {
+            return new Sleep.oneSecond();
+        }
+
+        public Action half()
+        {
+            return new Sleep.half();
+        }
+    }
+
 
 
 
@@ -443,6 +488,8 @@ public class DefaultAutoSetup extends LinearOpMode {
         IntakeSwivel inSwivel = new IntakeSwivel(hardwareMap);
         IntakeGrasper inGrasper = new IntakeGrasper(hardwareMap);
 
+        Sleep sleep = new Sleep();
+
 
         TrajectoryActionBuilder action = drive.actionBuilder(pose)
                 .strafeToLinearHeading(new Vector2d(-15, 8), Math.toRadians(45));
@@ -454,7 +501,19 @@ public class DefaultAutoSetup extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        action.build()
+                        outGrasper.open(),
+                        sleep.oneSec(),
+                        outGrasper.close(),
+                        sleep.oneSec(),
+                        outGrasper.open(),
+                        sleep.oneSec(),
+                        outGrasper.close(),
+                        sleep.oneSec(),
+                        outGrasper.open(),
+                        sleep.oneSec(),
+                        outGrasper.close(),
+                        sleep.oneSec()
+
                 )
         );
 
