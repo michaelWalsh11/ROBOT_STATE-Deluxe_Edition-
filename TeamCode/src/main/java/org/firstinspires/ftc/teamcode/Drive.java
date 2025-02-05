@@ -27,6 +27,7 @@ public class Drive extends OpMode {
     private double outtakeSwivel;
 
     private double unSheath;
+    private double unSheath2;
     private boolean turnedOff;
     private boolean toggle2 = true;
 
@@ -65,6 +66,7 @@ public class Drive extends OpMode {
         outtakeSwivel = robot.outtakeSwivel.getPosition();
 
         unSheath = robot.unSheath.getPosition();
+        unSheath2 = robot.unSheath2.getPosition();
     }
 
     @Override
@@ -156,11 +158,13 @@ public class Drive extends OpMode {
         if (!gamepad1.y && !turnedOff)
         {
             robot.unSheath.setPosition(UNSHEATH_SHEATH);
+            robot.unSheath2.setPosition(UNSHEATH2_SHEATH);
         }
 
         if (gamepad1.y || turnedOff)
         {
             robot.unSheath.setPosition(UNSHEATH_UNSHEATH);
+            robot.unSheath2.setPosition(UNSHEATH2_UNSHEATH);
             turnedOff = true;
         }
     }

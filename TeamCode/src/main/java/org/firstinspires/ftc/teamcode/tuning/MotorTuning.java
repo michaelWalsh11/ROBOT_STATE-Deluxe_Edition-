@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Init;
 
 
-@TeleOp(name="Tune her, Hunter", group="Training")
+@TeleOp(name=":(", group="Training")
 //@Disabled
 public class MotorTuning extends OpMode {
 

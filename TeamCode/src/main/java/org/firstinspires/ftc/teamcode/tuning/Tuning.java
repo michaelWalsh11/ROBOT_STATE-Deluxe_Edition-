@@ -25,6 +25,7 @@ public class Tuning extends OpMode {
     public double rotatePos6;
     public double rotatePos7;
     public double rotatePos8;
+    public double rotatePos9;
 
 
     public double inPos1;
@@ -206,6 +207,17 @@ public class Tuning extends OpMode {
         }
 
         robot.unSheath.setPosition(rotatePos8);
+
+        if (gamepad1.left_stick_y > 0.4)
+        {
+            rotatePos9 = Math.min(rotatePos9 + 0.005, 1.0);
+        }
+        if (gamepad1.left_stick_y < -0.4)
+        {
+            rotatePos9 = Math.max(rotatePos9 - 0.005, 0.0);
+        }
+
+        robot.unSheath2.setPosition(rotatePos9);
 
         //robot.intake2.setPosition(rotatePos7);
 

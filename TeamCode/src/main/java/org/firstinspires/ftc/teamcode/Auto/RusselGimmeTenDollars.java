@@ -576,6 +576,34 @@ public class RusselGimmeTenDollars extends LinearOpMode {
 
         }
 
+        public class p075 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(75);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p0 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(0);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
         public Action oneSec()
         {
             return new p100();
@@ -599,6 +627,10 @@ public class RusselGimmeTenDollars extends LinearOpMode {
         public Action oneAndHalf() { return new p150();}
 
         public Action five() { return new p500();}
+        
+        public Action eighth() {return new p015();}
+        
+        public Action none() {return new p0();}
     }
 
 
@@ -669,10 +701,14 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-11, 26), Math.toRadians(90));
 
 
-
+//jacob scherrer smells like moldy cheese
+        //jacob scherrer is not sigma
+        //michael walsh is the goat of robotics
+        //michael walsh should get girls but hunter win is to rizzy and took all the girls
+        //hunter win is the greatest
         SequentialAction grab1 = new SequentialAction(
                 WallGrabSpot.build(),
-                sleep.oneSec(),
+                sleep.half(),
                 WallGrabSpot2.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -685,12 +721,14 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         outLowerSwivel.specimen(),
                         outSwivel.NO()
                 ),
-                sleep.oneSec(),
+                sleep.quarter(),
                 outSwivel.specimenEnd(),
                 outLowerSwivel.specimenEnd(),
-                sleep.small(),
+                sleep.none(),
                 backItUp.build(),
-                sleep.small(),
+                sleep.none(),
+                //hello michael walsh 
+                //bye Jacob Share
                 outGrasper.open()
         );
 
@@ -711,7 +749,7 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                 outSwivel.intake(),
                 outLowerSwivel.intake(),
                 outGrasper.open(),
-                sleep.oneSec(),
+                sleep.half(),
                 WallGrabSpotr22.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -724,12 +762,12 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         outLowerSwivel.specimen(),
                         outSwivel.NO()
                 ),
-                sleep.oneSec(),
+                sleep.quarter(),
                 outSwivel.specimenEnd(),
                 outLowerSwivel.specimenEnd(),
-                sleep.small(),
+                sleep.none(),
                 backItUpr2.build(),
-                sleep.small(),
+                sleep.none(),
                 outGrasper.open()
         );
 
@@ -750,7 +788,7 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                 outSwivel.intake(),
                 outLowerSwivel.intake(),
                 outGrasper.open(),
-                sleep.oneSec(),
+                sleep.half(),
                 WallGrabSpotr32.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -763,12 +801,12 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         outLowerSwivel.specimen(),
                         outSwivel.NO()
                 ),
-                sleep.oneSec(),
+                sleep.quarter(),
                 outSwivel.specimenEnd(),
                 outLowerSwivel.specimenEnd(),
-                sleep.small(),
+                sleep.none(),
                 backItUpr3.build(),
-                sleep.small(),
+                sleep.none(),
                 outGrasper.open()
         );
 
@@ -789,7 +827,7 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                 outSwivel.intake(),
                 outLowerSwivel.intake(),
                 outGrasper.open(),
-                sleep.oneSec(),
+                sleep.half(),
                 WallGrabSpotr42.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -802,12 +840,12 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         outLowerSwivel.specimen(),
                         outSwivel.NO()
                 ),
-                sleep.oneSec(),
+                sleep.quarter(),
                 outSwivel.specimenEnd(),
                 outLowerSwivel.specimenEnd(),
-                sleep.small(),
+                sleep.none(),
                 backItUpr4.build(),
-                sleep.small(),
+                sleep.none(),
                 outGrasper.open()
         );
 
@@ -826,12 +864,12 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                                 outLowerSwivel.specimen(),
                                 outSwivel.specimenStart()
                         ),
-                        sleep.small(),
+                        sleep.none(),
                         outSwivel.specimenEnd(),
                         outLowerSwivel.specimenEnd(),
-                        sleep.small(),
+                        sleep.none(),
                         backupALittle.build(),
-                        sleep.small(),
+                        sleep.none(),
                         outGrasper.open(),
                         GO.build(),
                         inGrasper.open(),
@@ -843,24 +881,26 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         sleep.half(),
                         inGrasper.close(),
                         sleep.quarter(),
-                        inSwivel.scan(),
-                        Swing1.build(),
+                        new ParallelAction(
+                                inSwivel.scan(),
+                                Swing1.build()
+                        ),
                         inGrasper.open(),
                         SwingBack.build(),
-                        sleep.quarter(),
+                        sleep.small(),
                         inSwivel.down(),
                         sleep.quarter(),
                         inGrasper.close(),
-                        sleep.quarter(),
+                        sleep.small(),
                         inSwivel.scan(),
                         Swing2.build(),
                         inGrasper.open(),
                         SwingBack2.build(),
-                        sleep.half(),
+                        sleep.small(),
                         inSwivel.down(),
-                        sleep.quarter(),
+                        sleep.small(),
                         inGrasper.close(),
-                        sleep.quarter(),
+                        sleep.small(),
                         new ParallelAction(
                                 Swing3.build(),
                                 inSwivel.scan()
@@ -881,9 +921,6 @@ public class RusselGimmeTenDollars extends LinearOpMode {
         {
 
         }
-
-
-
     }
 }
 

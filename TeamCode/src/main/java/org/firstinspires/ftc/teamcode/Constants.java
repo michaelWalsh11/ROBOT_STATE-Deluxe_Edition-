@@ -46,6 +46,9 @@ public class Constants
     public static double UNSHEATH_SHEATH = 0.24;
     public static double UNSHEATH_UNSHEATH = 0.51;
 
+    public static double UNSHEATH2_SHEATH = 0.0;
+    public static double UNSHEATH2_UNSHEATH = 0.0;
+
     public static int OUTTAKE_ARM_SPEED = 30;
     public static double OUTTAKE_ARM_POWER = 0.7;
     public static int OUTTAKE_ARM_BUCKET = 2350;

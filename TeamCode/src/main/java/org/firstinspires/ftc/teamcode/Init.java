@@ -33,6 +33,7 @@ public class Init {
     public Servo intake2 = null;
 
     public Servo unSheath = null;
+    public Servo unSheath2 = null;
 
     public TouchSensor vertArms = null;
     public IMU imu;
@@ -93,6 +94,7 @@ public class Init {
         intake2 = hwMap.servo.get("intake2");
 
         unSheath = hwMap.servo.get("unSheath");
+        unSheath2 = hwMap.servo.get("unSheath2");
 
         //IMU
         imu = hwMap.get(IMU.class, "imu");
