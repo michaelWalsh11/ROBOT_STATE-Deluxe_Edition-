@@ -122,6 +122,15 @@ public class DefaultAutoSetup extends LinearOpMode {
             }
         }
 
+        public class RotateRights implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                rotator.setPosition(INTAKE_BLAH_BLAH_BOO_I_SCARED_YOU);
+                return false;
+            }
+        }
+
         public Action straight() {
             return new RotateStraight();
         }
@@ -133,6 +142,8 @@ public class DefaultAutoSetup extends LinearOpMode {
         public Action right() {
             return new RotateRight();
         }
+
+        public Action rot() {return new RotateRights();}
     }
 
 
@@ -491,36 +502,46 @@ public class DefaultAutoSetup extends LinearOpMode {
         Sleep sleep = new Sleep();
 
 
-        TrajectoryActionBuilder action = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(-15, 8), Math.toRadians(45));
+        TrajectoryActionBuilder goToWallFirst = drive.actionBuilder(pose)
+                .strafeToLinearHeading(new Vector2d(0, 33), Math.toRadians(90));
+
+        TrajectoryActionBuilder backupALittle = drive.actionBuilder(new Pose2d(0, 33, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(0, 27), Math.toRadians(90));
 
 
 
         waitForStart();
 
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        outGrasper.open(),
-                        sleep.oneSec(),
-                        outGrasper.close(),
-                        sleep.oneSec(),
-                        outGrasper.open(),
-                        sleep.oneSec(),
-                        outGrasper.close(),
-                        sleep.oneSec(),
-                        outGrasper.open(),
-                        sleep.oneSec(),
-                        outGrasper.close(),
-                        sleep.oneSec()
-
-                )
-        );
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        outGrasper.open(),
+//                        sleep.oneSec(),
+//                        outGrasper.close(),
+//                        sleep.oneSec(),
+//                        outGrasper.open(),
+//                        sleep.oneSec(),
+//                        outGrasper.close(),
+//                        sleep.oneSec(),
+//                        outGrasper.open(),
+//                        sleep.oneSec(),
+//                        outGrasper.close(),
+//                        sleep.oneSec()
+//
+//                )
+//        );
 
 
         while (opModeIsActive())
         {
-
+            Actions.runBlocking(
+                    new SequentialAction(
+                            outGrasper.open(),
+                            sleep.oneSec(),
+                            outGrasper.close(),
+                            sleep.oneSec()
+                    )
+            );
         }
 
 

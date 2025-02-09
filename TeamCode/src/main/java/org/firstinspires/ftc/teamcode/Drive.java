@@ -197,7 +197,7 @@ public class Drive extends OpMode {
 
             outtakeSwivel = OUTTAKE_SWIVEL_TRANSFER;
 
-            Thread.sleep(200);
+            Thread.sleep(400);
 
             outtakeGrasper = OUTTAKE_GRASPER_CLOSE;
 

@@ -23,7 +23,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name="BucketAuto :(", group="Autonomous")
+@Autonomous(name="My beatiful, precious, Hunter Nguyen bless us in the auto that shall transpire.", group="Autonomous")
 public class BucketAuto extends LinearOpMode {
 
     public class Outtake {
@@ -34,42 +34,56 @@ public class BucketAuto extends LinearOpMode {
         public Outtake(HardwareMap hardwareMap) {
             outTake1 = hardwareMap.get(DcMotorEx.class, "outtake1");
             outTake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            outTake1.setDirection(DcMotorSimple.Direction.REVERSE);
+            outTake1.setDirection(DcMotorSimple.Direction.FORWARD);
 
             outTake2 = hardwareMap.get(DcMotorEx.class, "outtake2");
             outTake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            outTake2.setDirection(DcMotorSimple.Direction.FORWARD);
+            outTake2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         }
 
         public class OuttakeToPos implements Action {
-            private final double targetPosition;
+            private final int targetPosition;
             private final double holdingPower;
+            private final double direction;
             private boolean initialized = false;
 
-            public OuttakeToPos(double targetPosition, double holdingPower) {
+            public OuttakeToPos(int targetPosition, double holdingPower, double direction) {
                 this.targetPosition = targetPosition;
                 this.holdingPower = holdingPower;
+                this.direction = direction;
             }
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized)
                 {
-                    outTake1.setPower(0.8);
-                    outTake2.setPower(0.8);
+
                     initialized = true;
                 }
 
-                double pos = outTake1.getCurrentPosition();
+                outTake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                outTake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                outTake1.setPower(direction);
+                outTake2.setPower(direction);
+
+                packet.put("outtake1Pos", outTake1.getCurrentPosition());
+                packet.put("outtake2Pos", outTake2.getCurrentPosition());
+
+
+                int pos = outTake1.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < targetPosition) {
-                    return true; // Continue running the action
+                if (Math.abs(targetPosition - pos) > 20) {
+                    return true;
                 }
                 else
                 {
+                    outTake1.setTargetPosition(pos);
+                    outTake2.setTargetPosition(pos);
+                    outTake1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    outTake2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     outTake1.setPower(holdingPower);  // Apply a small power to hold the position
-                    outTake2.setPower(holdingPower);
+                    outTake2.setPower(0.0);
                     return false; // Stop running, but maintain hold
                 }
             }
@@ -78,11 +92,11 @@ public class BucketAuto extends LinearOpMode {
         }
 
         public Action bottom() {
-            return new OuttakeToPos(OUTTAKE_ARM_BOTTOM, 0.2);
+            return new OuttakeToPos(OUTTAKE_ARM_BOTTOM, 0.2, -1.0);
         }
 
         public Action bucket() {
-            return new OuttakeToPos(OUTTAKE_ARM_BUCKET, 0.2);
+            return new OuttakeToPos(OUTTAKE_ARM_BUCKET, 0.2, 1.0);
         }
 
     }
@@ -123,6 +137,24 @@ public class BucketAuto extends LinearOpMode {
             }
         }
 
+        public class RotateGrab implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                rotator.setPosition(INTAKE_ROTATOR_GRAB);
+                return false;
+            }
+        }
+
+        public class RotateRights implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                rotator.setPosition(INTAKE_BLAH_BLAH_BOO_I_SCARED_YOU);
+                return false;
+            }
+        }
+
         public Action straight() {
             return new RotateStraight();
         }
@@ -134,6 +166,12 @@ public class BucketAuto extends LinearOpMode {
         public Action right() {
             return new RotateRight();
         }
+
+        public Action grab() {
+            return new RotateGrab();
+        }
+
+        public Action rot() {return new RotateRights();}
     }
 
 
@@ -222,33 +260,64 @@ public class BucketAuto extends LinearOpMode {
     public class IntakeSlider
     {
         private Servo inSlider;
+        private double intakePos;
 
         public IntakeSlider(HardwareMap hardwareMap) {
             inSlider = hardwareMap.get(Servo.class, "intake1");
-        }
+            intakePos = inSlider.getPosition();
 
-        public class IntakeOut implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                inSlider.setPosition(INTAKE_OUT);
-                return false;
-            }
         }
 
         public class IntakeIn implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                inSlider.setPosition(INTAKE_IN);
+                // Gradually move the servo towards INTAKE_IN, if not already there
+                if (intakePos < INTAKE_IN) {
+                    intakePos = Math.min(intakePos + 0.2, INTAKE_IN); // Gradually move in
+                    inSlider.setPosition(intakePos); // Set the new position
+
+                    return true;
+                }
                 return false;
             }
         }
+
+        // Action to move the intake slider out
+        public class IntakeOut implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // Gradually move the servo towards INTAKE_OUT, if not already there
+                if (intakePos > INTAKE_OUT) {
+                    intakePos = Math.max(intakePos - 0.2, INTAKE_OUT); // Gradually move out
+                    inSlider.setPosition(intakePos); // Set the new position
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public class IntakeTransfer implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // Gradually move the servo towards INTAKE_OUT, if not already there
+                if (intakePos < INTAKE_WEE_BIT_OUT) {
+                    intakePos = Math.max(intakePos + 0.2, INTAKE_WEE_BIT_OUT); // Gradually move out
+                    inSlider.setPosition(intakePos); // Set the new position
+                    return true;
+                }
+                return false;
+            }
+        }
+
 
         public Action in() { return new IntakeIn(); }
 
         public Action out() {
             return new IntakeOut();
+        }
+
+        public Action tadOut() {
+            return new IntakeTransfer();
         }
     }
 
@@ -334,6 +403,15 @@ public class BucketAuto extends LinearOpMode {
             }
         }
 
+        public class OuttakeLowerSwivelSpecimenEnd implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outSwivelLower.setPosition(OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN_END);
+                return false;
+            }
+        }
+
 
         public Action intake() { return new OuttakeLowerSwivelIntake(); }
 
@@ -349,6 +427,10 @@ public class BucketAuto extends LinearOpMode {
             return new OuttakeLowerSwivelTransfer();
         }
 
+        public Action specimenEnd()
+        {
+            return new OuttakeLowerSwivelSpecimenEnd();
+        }
     }
 
 
@@ -405,6 +487,24 @@ public class BucketAuto extends LinearOpMode {
             }
         }
 
+        public class NOOOOOOOOOOOOOOOO implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outSwivel.setPosition(NOOOOOOOOOOOOO);
+                return false;
+            }
+        }
+
+        public class OUTTAKE_SWIVEL_INTAKE_2 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outSwivel.setPosition(OUTTAKE_SWIVEL_INTAKE_2);
+                return false;
+            }
+        }
+
 
         public Action bucket() { return new OuttakeSwivelBucket(); }
 
@@ -422,6 +522,158 @@ public class BucketAuto extends LinearOpMode {
 
         public Action intake() { return new OuttakeSwivelIntake(); }
 
+        public Action NO() { return new NOOOOOOOOOOOOOOOO(); }
+
+        public Action r2() { return new OUTTAKE_SWIVEL_INTAKE_2(); }
+
+    }
+
+    public class Sleep
+    {
+        public Sleep()
+        {
+
+        }
+
+        public class p500 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p150 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p100 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p050 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p025 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p015 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p075 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(75);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public class p0 implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                try {
+                    Thread.sleep(0);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+
+        }
+
+        public Action oneSec()
+        {
+            return new p100();
+        }
+
+        public Action half()
+        {
+            return new p050();
+        }
+
+        public Action quarter()
+        {
+            return new p025();
+        }
+
+        public Action small()
+        {
+            return new p015();
+        }
+
+        public Action oneAndHalf() { return new p150();}
+
+        public Action five() { return new p500();}
+
+        public Action eighth() {return new p015();}
+
+        public Action none() {return new p0();}
     }
 
 
@@ -430,7 +682,7 @@ public class BucketAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Pose2d pose = new Pose2d(0, 0, Math.toRadians(90));
+        Pose2d pose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, pose);
 
         Outtake outtake = new Outtake(hardwareMap);
@@ -444,12 +696,46 @@ public class BucketAuto extends LinearOpMode {
         IntakeSwivel inSwivel = new IntakeSwivel(hardwareMap);
         IntakeGrasper inGrasper = new IntakeGrasper(hardwareMap);
 
-
-        TrajectoryActionBuilder action = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(-15, 8), Math.toRadians(45));
+        Sleep sleep = new Sleep();
 
 
-        waitForStart();
+        TrajectoryActionBuilder putInOne = drive.actionBuilder(pose)
+                .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
+
+        TrajectoryActionBuilder pickUpOne = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
+                .strafeToLinearHeading(new Vector2d(-13.5, 17), Math.toRadians(90));
+
+        TrajectoryActionBuilder putInTwo = drive.actionBuilder(new Pose2d(-15.5, 13, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
+
+        TrajectoryActionBuilder pickUpTwo = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
+                .strafeToLinearHeading(new Vector2d(-22.5, 16), Math.toRadians(100));
+
+        TrajectoryActionBuilder putInThree = drive.actionBuilder(new Pose2d(-22.5, 16, Math.toRadians(100)))
+                .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
+
+        TrajectoryActionBuilder pickUpThree = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
+                .strafeToLinearHeading(new Vector2d(-21.5, 18), Math.toRadians(130));
+
+        TrajectoryActionBuilder putInFour = drive.actionBuilder(new Pose2d(-21.5, 18, Math.toRadians(130)))
+                .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
+
+        TrajectoryActionBuilder park = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
+                .strafeToLinearHeading(new Vector2d(0, 55), Math.toRadians(180));
+
+        TrajectoryActionBuilder parker = drive.actionBuilder(new Pose2d(0, 55, Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(1, 55), Math.toRadians(60));
+
+        TrajectoryActionBuilder parkers = drive.actionBuilder(new Pose2d(1, 55, Math.toRadians(60)))
+                .strafeToLinearHeading(new Vector2d(2, 55), Math.toRadians(-60));
+
+        TrajectoryActionBuilder boomShaqalaqacka = drive.actionBuilder(new Pose2d(2, 55, Math.toRadians(-60)))
+                .strafeToLinearHeading(new Vector2d(3, 55), Math.toRadians(180));
+
+        TrajectoryActionBuilder parkersss = drive.actionBuilder(new Pose2d(3, 55, Math.toRadians(180)))
+                .strafeToLinearHeading(new Vector2d(25, 55), Math.toRadians(180));
+
+
 
         SequentialAction transfer = new SequentialAction(
                 inGrasper.close(),
@@ -469,13 +755,155 @@ public class BucketAuto extends LinearOpMode {
                 )
         );
 
+        waitForStart();
+
         Actions.runBlocking(
                 new SequentialAction(
+                        new ParallelAction(
+                                outGrasper.close(),
+                                outSwivel.bucket(),
+                                outLowerSwivel.transfer(),
+                                outtake.bucket(),
+                                putInOne.build(),
+                                inSwivel.transfer()
+                        ),
+                        sleep.quarter(),
+                        outLowerSwivel.bucket(),
+                        sleep.half(),
                         outGrasper.open(),
-                        transfer,
-                        action.build(),
-                        outGrasper.close()
-
+                        sleep.small(),
+                        outLowerSwivel.transfer(),
+                        pickUpOne.build(),
+                        new ParallelAction(
+                                outtake.bottom(),
+                                inSwivel.scan(),
+                                inGrasper.open(),
+                                inSlider.out()
+                        ),
+                        sleep.half(),
+                        inSwivel.down(),
+                        sleep.quarter(),
+                        inGrasper.close(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                inRotator.straight(),
+                                inSwivel.transfer(),
+                                inSlider.tadOut(),
+                                outLowerSwivel.transfer(),
+                                outtake.bottom(),
+                                outGrasper.open()
+                        ),
+                        sleep.half(),
+                        outSwivel.transfer(),
+                        sleep.quarter(),
+                        outGrasper.close(),
+                        sleep.quarter(),
+                        inGrasper.open(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                outSwivel.bucket(),
+                                outtake.bucket(),
+                                putInTwo.build()
+                        ),
+                        sleep.half(),
+                        outLowerSwivel.bucket(),
+                        sleep.half(),
+                        outGrasper.open(),
+                        sleep.small(),
+                        outLowerSwivel.transfer(),
+                        new ParallelAction(
+                                pickUpTwo.build(),
+                                outtake.bottom(),
+                                inSlider.out(),
+                                inSwivel.scan(),
+                                inGrasper.open()
+                        ),
+                        sleep.half(),
+                        inSwivel.down(),
+                        sleep.quarter(),
+                        inGrasper.close(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                inRotator.straight(),
+                                inSwivel.transfer(),
+                                inSlider.tadOut(),
+                                outLowerSwivel.transfer(),
+                                outtake.bottom(),
+                                outGrasper.open()
+                        ),
+                        sleep.half(),
+                        outSwivel.transfer(),
+                        sleep.quarter(),
+                        outGrasper.close(),
+                        sleep.quarter(),
+                        inGrasper.open(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                outSwivel.bucket(),
+                                outtake.bucket(),
+                                putInThree.build()
+                        ),
+                        sleep.half(),
+                        outLowerSwivel.bucket(),
+                        sleep.half(),
+                        outGrasper.open(),
+                        sleep.small(),
+                        outLowerSwivel.transfer(),
+                        new ParallelAction(
+                                pickUpThree.build(),
+                                outtake.bottom(),
+                                inSlider.out(),
+                                inSwivel.scan(),
+                                inRotator.rot(),
+                                inGrasper.open()
+                        ),
+                        sleep.half(),
+                        inSwivel.down(),
+                        sleep.quarter(),
+                        inGrasper.close(),
+                        sleep.quarter(),
+                        inSwivel.transfer(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                inRotator.straight(),
+                                inSwivel.transfer(),
+                                inSlider.tadOut(),
+                                outLowerSwivel.transfer(),
+                                outtake.bottom(),
+                                outGrasper.open()
+                        ),
+                        sleep.half(),
+                        outSwivel.transfer(),
+                        sleep.quarter(),
+                        outGrasper.close(),
+                        sleep.quarter(),
+                        inGrasper.open(),
+                        sleep.quarter(),
+                        new ParallelAction(
+                                outSwivel.bucket(),
+                                outtake.bucket(),
+                                putInFour.build()
+                        ),
+                        sleep.half(),
+                        outLowerSwivel.bucket(),
+                        sleep.half(),
+                        outGrasper.open(),
+                        sleep.small(),
+                        outLowerSwivel.transfer(),
+                        new ParallelAction(
+                                park.build(),
+                                outtake.bottom(),
+                                inSwivel.scan(),
+                                inGrasper.open(),
+                                inSlider.in(),
+                                inRotator.straight(),
+                                inSwivel.transfer()
+                        ),
+                        parker.build(),
+                        parkers.build(),
+                        boomShaqalaqacka.build(),
+                        parkersss.build(),
+                        outSwivel.intake()
                 )
         );
 

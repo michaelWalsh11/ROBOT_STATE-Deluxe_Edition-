@@ -97,6 +97,8 @@ public class Tuning extends OpMode {
         rotatePos6 = robot.intake1.getPosition();
         rotatePos7 = robot.intake2.getPosition();
 
+        rotatePos9 = robot.unSheath2.getPosition();
+
         inPos1 = robot.intake1.getPosition();
         outPos1 = robot.outtake1.getCurrentPosition();
 
@@ -271,7 +273,7 @@ public class Tuning extends OpMode {
         telemetry.addLine("intakeRotator (a and y) " + rotatePos4 + "  " + robot.intakeRotator.getPosition());
         telemetry.addLine("intakeSwivel (lb and rb) " + rotatePos5 + "  " + robot.intakeSwivel.getPosition());
         telemetry.addLine("unSheath (dpad_left and dpad_right) " + rotatePos8 + "  " + robot.unSheath.getPosition());
-
+        telemetry.addLine("unSheath2 (1LSY) " + rotatePos9 + "  " + robot.unSheath2.getPosition());
 
     }
 

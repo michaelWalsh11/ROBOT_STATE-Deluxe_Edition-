@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -23,8 +24,8 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name="Pay Up Marcus Walter (Dinero edition)", group="Autonomous")
-public class RusselGimmeTenDollars extends LinearOpMode {
+@Autonomous(name="BOOOOOOOOO (loser edition / miller moore edition)", group="Autonomous")
+public class FiveSpecTest extends LinearOpMode {
 
     public class Outtake {
 
@@ -627,9 +628,9 @@ public class RusselGimmeTenDollars extends LinearOpMode {
         public Action oneAndHalf() { return new p150();}
 
         public Action five() { return new p500();}
-        
+
         public Action eighth() {return new p015();}
-        
+
         public Action none() {return new p0();}
     }
 
@@ -662,6 +663,9 @@ public class RusselGimmeTenDollars extends LinearOpMode {
         IntakeGrasper inGrasper = new IntakeGrasper(hardwareMap);
 
         Sleep sleep = new Sleep();
+
+        TrajectoryActionBuilder ghruhfg = drive.actionBuilder(new Pose2d(0, 33, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
 
 
         TrajectoryActionBuilder goToWallFirst = drive.actionBuilder(pose)
@@ -727,7 +731,7 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                 sleep.none(),
                 backItUp.build(),
                 sleep.none(),
-                //hello michael walsh 
+                //hello michael walsh
                 //bye Jacob Share
                 outGrasper.open()
         );
@@ -867,52 +871,56 @@ public class RusselGimmeTenDollars extends LinearOpMode {
                         sleep.none(),
                         outSwivel.specimenEnd(),
                         outLowerSwivel.specimenEnd(),
-                        sleep.none(),
-                        backupALittle.build(),
-                        sleep.none(),
-                        outGrasper.open(),
-                        GO.build(),
-                        inGrasper.open(),
-                        new ParallelAction(
-                                inSlider.out(),
-                                inSwivel.down(),
-                                inRotator.grab()
-                        ),
-                        sleep.half(),
-                        inGrasper.close(),
                         sleep.quarter(),
                         new ParallelAction(
-                                inSwivel.scan(),
-                                Swing1.build()
+                                new SequentialAction(
+                                        new SleepAction(0.25),
+                                        outGrasper.open()
+                                ),
+                                ghruhfg.build()
                         ),
-                        inGrasper.open(),
-                        SwingBack.build(),
-                        sleep.small(),
-                        inSwivel.down(),
-                        sleep.quarter(),
-                        inGrasper.close(),
-                        sleep.small(),
-                        inSwivel.scan(),
-                        Swing2.build(),
-                        inGrasper.open(),
-                        SwingBack2.build(),
-                        sleep.small(),
-                        inSwivel.down(),
-                        sleep.small(),
-                        inGrasper.close(),
-                        sleep.small(),
-                        new ParallelAction(
-                                Swing3.build(),
-                                inSwivel.scan()
-                        ),
-                        inGrasper.open(),
-                        outSwivel.intake(),
-                        outLowerSwivel.intake(),
-                        outGrasper.open(),
-                        grab1,
-                        grab2,
-                        grab3,
-                        grab4
+                        sleep.five()
+//                        inGrasper.open(),
+//                        new ParallelAction(
+//                                inSlider.out(),
+//                                inSwivel.down(),
+//                                inRotator.grab()
+//                        ),
+//                        sleep.half(),
+//                        inGrasper.close(),
+//                        sleep.quarter(),
+//                        new ParallelAction(
+//                                inSwivel.scan(),
+//                                Swing1.build()
+//                        ),
+//                        inGrasper.open(),
+//                        SwingBack.build(),
+//                        sleep.small(),
+//                        inSwivel.down(),
+//                        sleep.quarter(),
+//                        inGrasper.close(),
+//                        sleep.small(),
+//                        inSwivel.scan(),
+//                        Swing2.build(),
+//                        inGrasper.open(),
+//                        SwingBack2.build(),
+//                        sleep.small(),
+//                        inSwivel.down(),
+//                        sleep.small(),
+//                        inGrasper.close(),
+//                        sleep.small(),
+//                        new ParallelAction(
+//                                Swing3.build(),
+//                                inSwivel.scan()
+//                        ),
+//                        inGrasper.open(),
+//                        outSwivel.intake(),
+//                        outLowerSwivel.intake(),
+//                        outGrasper.open(),
+//                        grab1,
+//                        grab2,
+//                        grab3,
+//                        grab4
                 )
         );
 
