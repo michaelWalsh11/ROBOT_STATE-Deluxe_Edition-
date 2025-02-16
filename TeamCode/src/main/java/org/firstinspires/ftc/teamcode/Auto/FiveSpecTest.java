@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -24,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name="BOOOOOOOOO (loser edition / miller moore edition)", group="Autonomous")
+@Autonomous(name="Mmmmmmmm, Mmmmmmm, Mmw", group="Autonomous")
 public class FiveSpecTest extends LinearOpMode {
 
     public class Outtake {
@@ -395,71 +396,106 @@ public class FiveSpecTest extends LinearOpMode {
     public class OuttakeSwivel
     {
         private Servo outSwivel;
+        private double swivelPos;
 
         public OuttakeSwivel(HardwareMap hardwareMap) {
             outSwivel = hardwareMap.get(Servo.class, "outSwivel");
+            swivelPos = outSwivel.getPosition();
         }
 
         public class OuttakeSwivelIntake implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_INTAKE);
+                if (swivelPos < OUTTAKE_SWIVEL_INTAKE) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_INTAKE); // Gradually move in
+                    outSwivel.setPosition(swivelPos); // Set the new position
+                    return true;
+                }
                 return false;
             }
         }
 
+        // Action to move the outtake swivel to transfer position
         public class OuttakeSwivelTransfer implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_TRANSFER);
-                return false;
+                if (swivelPos < OUTTAKE_SWIVEL_TRANSFER) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_TRANSFER);
+                } else if (swivelPos > OUTTAKE_SWIVEL_TRANSFER) {
+                    swivelPos = Math.max(swivelPos - 0.1, OUTTAKE_SWIVEL_TRANSFER);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != OUTTAKE_SWIVEL_TRANSFER;
             }
         }
 
+        // Action to move the outtake swivel to bucket position
         public class OuttakeSwivelBucket implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_OUTTAKE_BUCKET);
-                return false;
+                if (swivelPos < OUTTAKE_SWIVEL_OUTTAKE_BUCKET) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_OUTTAKE_BUCKET);
+                } else if (swivelPos > OUTTAKE_SWIVEL_OUTTAKE_BUCKET) {
+                    swivelPos = Math.max(swivelPos - 0.1, OUTTAKE_SWIVEL_OUTTAKE_BUCKET);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != OUTTAKE_SWIVEL_OUTTAKE_BUCKET;
             }
         }
 
+        // Action to move the outtake swivel to specimen start position
         public class OuttakeSwivelSpecimenStart implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START);
-                return false;
+                if (swivelPos < OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START);
+                } else if (swivelPos > OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START) {
+                    swivelPos = Math.max(swivelPos - 0.1, OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START;
             }
         }
 
+        // Action to move the outtake swivel to specimen end position
         public class OuttakeSwivelSpecimenEnd implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END);
-                return false;
+                if (swivelPos < OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END);
+                } else if (swivelPos > OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END) {
+                    swivelPos = Math.max(swivelPos - 0.1, OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_END;
             }
         }
 
+        // Action for NOOOOOOOOOOOOOOOO (with gradual movement)
         public class NOOOOOOOOOOOOOOOO implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(NOOOOOOOOOOOOO);
-                return false;
+                if (swivelPos < NOOOOOOOOOOOOO) {
+                    swivelPos = Math.min(swivelPos + 0.1, NOOOOOOOOOOOOO);
+                } else if (swivelPos > NOOOOOOOOOOOOO) {
+                    swivelPos = Math.max(swivelPos - 0.1, NOOOOOOOOOOOOO);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != NOOOOOOOOOOOOO;
             }
         }
 
+        // Action to move the outtake swivel to intake 2 position
         public class OUTTAKE_SWIVEL_INTAKE_2 implements Action {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outSwivel.setPosition(OUTTAKE_SWIVEL_INTAKE_2);
-                return false;
+                if (swivelPos < OUTTAKE_SWIVEL_INTAKE_2) {
+                    swivelPos = Math.min(swivelPos + 0.1, OUTTAKE_SWIVEL_INTAKE_2);
+                } else if (swivelPos > OUTTAKE_SWIVEL_INTAKE_2) {
+                    swivelPos = Math.max(swivelPos - 0.1, OUTTAKE_SWIVEL_INTAKE_2);
+                }
+                outSwivel.setPosition(swivelPos);
+                return swivelPos != OUTTAKE_SWIVEL_INTAKE_2;
             }
         }
 
@@ -664,9 +700,6 @@ public class FiveSpecTest extends LinearOpMode {
 
         Sleep sleep = new Sleep();
 
-        TrajectoryActionBuilder ghruhfg = drive.actionBuilder(new Pose2d(0, 33, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
-
 
         TrajectoryActionBuilder goToWallFirst = drive.actionBuilder(pose)
                 .strafeToLinearHeading(new Vector2d(0, 33), Math.toRadians(90));
@@ -699,10 +732,10 @@ public class FiveSpecTest extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
 
         TrajectoryActionBuilder PutItOn = drive.actionBuilder(new Pose2d(31, 10, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-11, 34), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-9, 34), Math.toRadians(90));
 
-        TrajectoryActionBuilder backItUp = drive.actionBuilder(new Pose2d(-11, 34, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-11, 26), Math.toRadians(90));
+        TrajectoryActionBuilder backItUp = drive.actionBuilder(new Pose2d(-9, 34, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-3, 26), Math.toRadians(90));
 
 
 //jacob scherrer smells like moldy cheese
@@ -712,7 +745,7 @@ public class FiveSpecTest extends LinearOpMode {
         //hunter win is the greatest
         SequentialAction grab1 = new SequentialAction(
                 WallGrabSpot.build(),
-                sleep.half(),
+                sleep.quarter(),
                 WallGrabSpot2.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -736,24 +769,32 @@ public class FiveSpecTest extends LinearOpMode {
                 outGrasper.open()
         );
 
-        TrajectoryActionBuilder WallGrabSpotr2 = drive.actionBuilder(new Pose2d(-9, 26, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 13), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr2 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(33, 13), Math.toRadians(90),
+                new TranslationalVelConstraint(50),
+                new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder WallGrabSpotr22 = drive.actionBuilder(new Pose2d(31, 13, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr22 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(33, 10), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder PutItOnr2 = drive.actionBuilder(new Pose2d(31, 10, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-9, 34), Math.toRadians(90));
+        TrajectoryActionBuilder PutItOnr2 = drive.actionBuilder(new Pose2d(33, 10, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-9, 34), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
         TrajectoryActionBuilder backItUpr2 = drive.actionBuilder(new Pose2d(-9, 34, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-9, 26), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-3, 26), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
         SequentialAction grab2 = new SequentialAction(
-                WallGrabSpotr2.build(),
-                outSwivel.intake(),
-                outLowerSwivel.intake(),
-                outGrasper.open(),
-                sleep.half(),
+                new ParallelAction(
+                        outSwivel.intake(),
+                        outLowerSwivel.intake(),
+                        outGrasper.open()
+                ),
                 WallGrabSpotr22.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -775,24 +816,32 @@ public class FiveSpecTest extends LinearOpMode {
                 outGrasper.open()
         );
 
-        TrajectoryActionBuilder WallGrabSpotr3 = drive.actionBuilder(new Pose2d(-6, 26, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 13), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr3 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(33, 13), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder WallGrabSpotr32 = drive.actionBuilder(new Pose2d(31, 13, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr32 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(33, 10), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder PutItOnr3 = drive.actionBuilder(new Pose2d(31, 10, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-6, 34), Math.toRadians(90));
+        TrajectoryActionBuilder PutItOnr3 = drive.actionBuilder(new Pose2d(33, 10, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-9, 34), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder backItUpr3 = drive.actionBuilder(new Pose2d(-6, 34, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-6, 26), Math.toRadians(90));
+        TrajectoryActionBuilder backItUpr3 = drive.actionBuilder(new Pose2d(-9, 34, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-3, 26), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
         SequentialAction grab3 = new SequentialAction(
-                WallGrabSpotr3.build(),
-                outSwivel.intake(),
-                outLowerSwivel.intake(),
-                outGrasper.open(),
-                sleep.half(),
+                new ParallelAction(
+                        outSwivel.intake(),
+                        outLowerSwivel.intake(),
+                        outGrasper.open()
+                ),
                 WallGrabSpotr32.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -814,24 +863,32 @@ public class FiveSpecTest extends LinearOpMode {
                 outGrasper.open()
         );
 
-        TrajectoryActionBuilder WallGrabSpotr4 = drive.actionBuilder(new Pose2d(-6, 26, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 13), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr4 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(31, 13), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder WallGrabSpotr42 = drive.actionBuilder(new Pose2d(31, 13, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(31, 10), Math.toRadians(90));
+        TrajectoryActionBuilder WallGrabSpotr42 = drive.actionBuilder(new Pose2d(-3, 26, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(33, 10), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
-        TrajectoryActionBuilder PutItOnr4 = drive.actionBuilder(new Pose2d(31, 10, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-3, 34), Math.toRadians(90));
+        TrajectoryActionBuilder PutItOnr4 = drive.actionBuilder(new Pose2d(33, 10, Math.toRadians(90)))
+                .strafeToLinearHeading(new Vector2d(-3, 34), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
         TrajectoryActionBuilder backItUpr4 = drive.actionBuilder(new Pose2d(-3, 34, Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(-3, 26), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(-3, 26), Math.toRadians(90),
+                        new TranslationalVelConstraint(50),
+                        new ProfileAccelConstraint(-50, 50));
 
         SequentialAction grab4 = new SequentialAction(
-                WallGrabSpotr4.build(),
-                outSwivel.intake(),
-                outLowerSwivel.intake(),
-                outGrasper.open(),
-                sleep.half(),
+                new ParallelAction(
+                        outSwivel.intake(),
+                        outLowerSwivel.intake(),
+                        outGrasper.open()
+                ),
                 WallGrabSpotr42.build(),
                 sleep.quarter(),
                 outGrasper.close(),
@@ -871,56 +928,52 @@ public class FiveSpecTest extends LinearOpMode {
                         sleep.none(),
                         outSwivel.specimenEnd(),
                         outLowerSwivel.specimenEnd(),
+                        sleep.none(),
+                        backupALittle.build(),
+                        sleep.none(),
+                        outGrasper.open(),
+                        GO.build(),
+                        inGrasper.open(),
+                        new ParallelAction(
+                                inSlider.out(),
+                                inSwivel.down(),
+                                inRotator.grab()
+                        ),
+                        sleep.half(),
+                        inGrasper.close(),
                         sleep.quarter(),
                         new ParallelAction(
-                                new SequentialAction(
-                                        new SleepAction(0.25),
-                                        outGrasper.open()
-                                ),
-                                ghruhfg.build()
+                                inSwivel.scan(),
+                                Swing1.build()
                         ),
-                        sleep.five()
-//                        inGrasper.open(),
-//                        new ParallelAction(
-//                                inSlider.out(),
-//                                inSwivel.down(),
-//                                inRotator.grab()
-//                        ),
-//                        sleep.half(),
-//                        inGrasper.close(),
-//                        sleep.quarter(),
-//                        new ParallelAction(
-//                                inSwivel.scan(),
-//                                Swing1.build()
-//                        ),
-//                        inGrasper.open(),
-//                        SwingBack.build(),
-//                        sleep.small(),
-//                        inSwivel.down(),
-//                        sleep.quarter(),
-//                        inGrasper.close(),
-//                        sleep.small(),
-//                        inSwivel.scan(),
-//                        Swing2.build(),
-//                        inGrasper.open(),
-//                        SwingBack2.build(),
-//                        sleep.small(),
-//                        inSwivel.down(),
-//                        sleep.small(),
-//                        inGrasper.close(),
-//                        sleep.small(),
-//                        new ParallelAction(
-//                                Swing3.build(),
-//                                inSwivel.scan()
-//                        ),
-//                        inGrasper.open(),
-//                        outSwivel.intake(),
-//                        outLowerSwivel.intake(),
-//                        outGrasper.open(),
-//                        grab1,
-//                        grab2,
-//                        grab3,
-//                        grab4
+                        inGrasper.open(),
+                        SwingBack.build(),
+                        sleep.small(),
+                        inSwivel.down(),
+                        sleep.quarter(),
+                        inGrasper.close(),
+                        sleep.small(),
+                        inSwivel.scan(),
+                        Swing2.build(),
+                        inGrasper.open(),
+                        SwingBack2.build(),
+                        sleep.small(),
+                        inSwivel.down(),
+                        sleep.small(),
+                        inGrasper.close(),
+                        sleep.small(),
+                        new ParallelAction(
+                                Swing3.build(),
+                                inSwivel.scan()
+                        ),
+                        inGrasper.open(),
+                        outSwivel.intake(),
+                        outLowerSwivel.intake(),
+                        outGrasper.open(),
+                        grab1,
+                        grab2,
+                        grab3,
+                        grab4
                 )
         );
 

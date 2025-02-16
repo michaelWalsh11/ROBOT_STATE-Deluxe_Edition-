@@ -6,8 +6,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.ftccommon.internal.manualcontrol.responses.ClosedLoopControlCoefficients;
 
-@TeleOp(name="DRIVE (and win hopefully)", group="Training")
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+
+@TeleOp(name="200 OPR? at a bare minimum 120 hopefully like 180 who knows, All i know" +
+        "is that we can get something good going if we can fill up the bucket that would" +
+        "be cool too. IDRK maybe we go with the brigade, but WE SHALL SEE and GOOD LUCK",
+        group="Training")
+
 //@Disabled
 public class Drive extends OpMode {
 
@@ -30,6 +39,9 @@ public class Drive extends OpMode {
     private double unSheath2;
     private boolean turnedOff;
     private boolean toggle2 = true;
+
+    private boolean toggleTeleOp = true;
+    private boolean beenPressed = false;
 
     private double DRIVE_SPEED = 1.0;
 
@@ -71,42 +83,81 @@ public class Drive extends OpMode {
 
     @Override
     public void loop() {
+
+        if (gamepad1.right_bumper && gamepad1.left_bumper && !beenPressed)
+        {
+            toggleTeleOp = !toggleTeleOp;
+            beenPressed = true;
+        }
+
+        if (!gamepad1.right_bumper || !gamepad1.left_bumper)
+        {
+            beenPressed = false;
+        }
+
         driveWToggle();
         intakeSystem();
         outtakeSystem();
+        //() -> () -> () -> () -> () -> Arrays.stream(ClosedLoopControlCoefficients.class.getClasses()).collect(Collectors.toCollection(controller1Telemetry())).getClass().getClasses()
 
         sheathManagment();
 
+        toggleTelemetry();
         controller1Telemetry();
         controller2Telemetry();
 
 
-        //THREAD I, ARE YOU HAVING FUN? (EMPTY)
-        new Thread(() -> {
-            try {
-                autoHang();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
 
-        //THREAD II, ELECTRIC BOOGALOO (EMPTY)
-        new Thread(() -> {
-            try {
-                autoPickUp();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        if (toggleTeleOp)
+        {
+            new Thread(() -> {
+                try {
+                    autoTransfer();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+        }
 
-        //THREAD III, YIPPEE (READY FOR TESTING)
-        new Thread(() -> {
-            try {
-                autoTransfer();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        if (!toggleTeleOp)
+        {
+            new Thread(() -> {
+                try {
+                    autoTransferOTHER();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+        }
+
+    }
+
+    public void toggleTelemetry()
+    {
+        if (toggleTeleOp) // sample
+        {
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+            telemetry.addLine("SAMPLE TELEOP SAMPLE TELEOP");
+        }
+        else
+        {
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+            telemetry.addLine("SPECIMEN TELEOP SPECIMEN TELEOP");
+        }
     }
 
     public void controller1Telemetry() {
@@ -178,6 +229,32 @@ public class Drive extends OpMode {
         Thread.sleep(10);
     }
 
+    public void autoTransferOTHER() throws InterruptedException {
+
+        if (gamepad2.a)
+        {
+            outPos = OUTTAKE_ARM_BOTTOM;
+            intakeRotate = INTAKE_ROTATOR_STRAIGHT;
+            intakeSwivel = INTAKE_SWIVEL_TRANSFER;
+            outtakeGrasper = OUTTAKE_GRASPER_OPEN;
+            outtakeWrist = OUTTAKE_LOWER_SWIVEL_INTAKE;
+            outtakeSwivel = OUTTAKE_SWIVEL_INTAKE;
+            intakePos = INTAKE_IN;
+
+            Thread.sleep(1000);
+
+            outtakeGrasper = OUTTAKE_GRASPER_CLOSE;
+
+            Thread.sleep(300);
+
+            outtakeGrasper = OUTTAKE_GRASPER_CLOSE;
+
+
+            outtakeWrist = OUTTAKE_LOWER_SWIVEL_OUTTAKE_SPECIMEN;
+            outtakeSwivel = OUTTAKE_SWIVEL_OUTTAKE_SPECIMEN_START;
+        }
+    }
+
     public void autoTransfer() throws InterruptedException {
 
         if (gamepad2.a)
@@ -201,7 +278,7 @@ public class Drive extends OpMode {
 
             outtakeGrasper = OUTTAKE_GRASPER_CLOSE;
 
-            Thread.sleep(400);
+            Thread.sleep(600);
 
             intakeGrasper = INTAKE_GRASPER_OPEN;
 
@@ -209,7 +286,6 @@ public class Drive extends OpMode {
 
             outtakeWrist = OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET;
             outtakeSwivel = OUTTAKE_SWIVEL_OUTTAKE_BUCKET;
-            outPos = OUTTAKE_ARM_BUCKET;
         }
     }
 
@@ -226,6 +302,14 @@ public class Drive extends OpMode {
         {
             intakePos = Math.max(intakePos - 0.008, INTAKE_OUT);
         }
+
+//        if (robot.intake1.getPosition() < intakePos)
+//        {
+//            intakePos = Math.min(intakePos + 0.2, INTAKE_IN);
+//        } else if (robot.intake1.getPosition() > intakePos)
+//        {
+//            intakePos = Math.max(intakePos - 0.2, INTAKE_IN);
+//        }
 
         robot.intake1.setPosition(intakePos);
 
@@ -247,12 +331,12 @@ public class Drive extends OpMode {
         //swivel control
         if (gamepad2.left_stick_y < -0.4)
         {
-            intakeSwivel = Math.min(intakeSwivel + 0.008, INTAKE_SWIVEL_TRANSFER);
+            intakeSwivel = Math.min(intakeSwivel + 0.02, INTAKE_SWIVEL_TRANSFER);
         }
 
         if (gamepad2.left_stick_y > 0.4)
         {
-            intakeSwivel = Math.max(intakeSwivel - 0.008, INTAKE_SWIVEL_DOWN);
+            intakeSwivel = Math.max(intakeSwivel - 0.02, INTAKE_SWIVEL_DOWN);
         }
 
         robot.intakeSwivel.setPosition(intakeSwivel);
@@ -287,13 +371,24 @@ public class Drive extends OpMode {
     public void outtakeSystem()
     {
         //ARMS
-        if (gamepad1.dpad_up)
+        if (gamepad2.dpad_left || gamepad1.dpad_up)
         {
             outPos += OUTTAKE_ARM_SPEED;
         }
-        if (gamepad1.dpad_down)
+
+        if (gamepad2.dpad_right || gamepad1.dpad_down)
         {
             outPos -= OUTTAKE_ARM_SPEED;
+        }
+
+        if (gamepad2.dpad_up || gamepad1.b)
+        {
+            outPos = OUTTAKE_ARM_BUCKET;
+        }
+
+        if (gamepad2.dpad_down || gamepad1.x)
+        {
+            outPos = OUTTAKE_ARM_BOTTOM;
         }
 
         if (outPos > OUTTAKE_ARM_BUCKET)
@@ -301,29 +396,62 @@ public class Drive extends OpMode {
             outPos = OUTTAKE_ARM_BUCKET;
         }
 
+        if (gamepad1.dpad_right)
+        {
+            outtakeSwivel = OUTTAKE_SWIVEL_INTAKE;
+        }
+
         //ARM ROTATOR
-        if (gamepad1.x)
+        if (gamepad1.dpad_left)
         {
-            //armRotatorPos = Math.min(armRotatorPos * OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_BACK);
-            armRotatorPos += OUTTAKE_ROTATOR_SPEED;
+            armRotatorPos = Math.min(armRotatorPos * OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_BACK);
+            //armRotatorPos += OUTTAKE_ROTATOR_SPEED;
         }
-        if (gamepad1.b)
+        if (gamepad1.dpad_right)
         {
-            //armRotatorPos = Math.max(armRotatorPos - OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_FORWARD);
-            armRotatorPos -= OUTTAKE_ROTATOR_SPEED;
-        }
-
-
-        //grasper control
-        if (gamepad1.right_trigger > 0.4)
-        {
-            outtakeGrasper = INTAKE_GRASPER_CLOSE;
+            armRotatorPos = Math.max(armRotatorPos - OUTTAKE_ROTATOR_SPEED, OUTTAKE_ROTATOR_FORWARD);
+            //armRotatorPos -= OUTTAKE_ROTATOR_SPEED;
         }
 
-        if (gamepad1.left_trigger > 0.4)
+        if (toggleTeleOp)
         {
-            outtakeGrasper = INTAKE_GRASPER_OPEN;
+            //grasper control
+            if (gamepad1.right_trigger > 0.4)
+            {
+                outtakeGrasper = INTAKE_GRASPER_CLOSE;
+            }
+
+            if (gamepad1.left_trigger > 0.4)
+            {
+                outtakeGrasper = INTAKE_GRASPER_OPEN;
+            }
         }
+
+        if (!toggleTeleOp)
+        {
+            if (gamepad1.right_trigger > 0.4)
+            {
+                outtakeGrasper = INTAKE_GRASPER_CLOSE;
+                outtakeWrist = OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET;
+                outtakeSwivel = OUTTAKE_SWIVEL_INTAKE;
+            }
+
+            if (gamepad1.left_trigger > 0.4)
+            {
+                new Thread(() -> {
+                    try {
+                        outtakeWrist = OUTTAKE_LOWER_SWIVEL_OUTTAKE_BUCKET;
+                        outtakeSwivel = OUTTAKE_SWIVEL_INTAKE;
+                        Thread.sleep(200);
+                        outtakeGrasper = INTAKE_GRASPER_OPEN;
+
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
+            }
+        }
+
 
         robot.outtakeGrasper.setPosition(outtakeGrasper);
 
@@ -336,7 +464,7 @@ public class Drive extends OpMode {
             toggle2 = false;
         }
 
-        if(!robot.vertArms.isPressed() || gamepad1.dpad_up)
+        if(!robot.vertArms.isPressed() || gamepad2.dpad_up || gamepad2.dpad_right || gamepad1.b)
         {
             robot.outtake1.setTargetPosition(outPos);
             robot.outtake1.setMode(DcMotor.RunMode.RUN_TO_POSITION);

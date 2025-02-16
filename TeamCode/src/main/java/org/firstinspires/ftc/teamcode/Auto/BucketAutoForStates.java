@@ -23,8 +23,8 @@ import static org.firstinspires.ftc.teamcode.Constants.*;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name="My beatiful, precious, Hunter Nguyen bless us in the auto that shall transpire.", group="Autonomous")
-public class BucketAuto extends LinearOpMode {
+@Autonomous(name="big man, get ready to rumble and NOT tumble", group="Autonomous")
+public class BucketAutoForStates extends LinearOpMode {
 
     public class Outtake {
 
@@ -698,9 +698,9 @@ public class BucketAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
 
         TrajectoryActionBuilder pickUpThree = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(-21.5, 18), Math.toRadians(130));
+                .strafeToLinearHeading(new Vector2d(-11.0, 35), Math.toRadians(180));
 
-        TrajectoryActionBuilder putInFour = drive.actionBuilder(new Pose2d(-21.5, 18, Math.toRadians(130)))
+        TrajectoryActionBuilder putInFour = drive.actionBuilder(new Pose2d(-11.0, 35, Math.toRadians(180)))
                 .strafeToLinearHeading(new Vector2d(-17.5, 4), Math.toRadians(45));
 
         TrajectoryActionBuilder park = drive.actionBuilder(new Pose2d(-17.5, 4, Math.toRadians(45)))
@@ -841,7 +841,7 @@ public class BucketAuto extends LinearOpMode {
                                 outtake.bottom(),
                                 inSlider.out(),
                                 inSwivel.scan(),
-                                inRotator.rot(),
+                                inRotator.left(),
                                 inGrasper.open()
                         ),
                         sleep.half(),
@@ -886,9 +886,7 @@ public class BucketAuto extends LinearOpMode {
                                 inRotator.straight(),
                                 inSwivel.transfer()
                         ),
-                        parker.build(),
-                        parkers.build(),
-                        boomShaqalaqacka.build(),
+                        sleep.quarter(),
                         parkersss.build(),
                         outSwivel.intake()
                 )
@@ -904,4 +902,5 @@ public class BucketAuto extends LinearOpMode {
 
     }
 }
+
 
